@@ -1,6 +1,6 @@
 from impala.dbapi import connect
-from impala.util import as_pandas
-import sys
+import pandas as pd
+# import sys
 
 # Run Instructions:
 # 1. enable kerberos client-- kinit megan.fung@ringcentral.com
@@ -31,13 +31,30 @@ conn = connect(
 # Create a cursor object to interact with the database
 cursor = conn.cursor()
 
-# Execute an SQL query
-cursor.execute("SELECT sfid, name FROM sfdc_production.latest_account LIMIT 10")
+# queries using columns:
+# name-- company name of opportunity
+# stagename-- (0. Downgraded, 7. Closed Won)
+sample_opportunities = """
+            SELECT name, stagename
+            FROM sfdc_production.opportunity
+            LIMIT 20
+        """
 
-# Fetch and print the results
-results = cursor.fetchall()
-for row in results:
-    print(row)
+# run queries
+cursor.execute(sample_opportunities)
+sample = cursor.fetchall()
+
+# sort by stagename
+df = pd.DataFrame(sample, columns=pd.Index(["Name", "Stage"]))
+downgraded_df = df[df["Stage"] == "0. Downgraded"].sort_values(by="Name")
+closed_won_df = df[df["Stage"] == "7. Closed Won"].sort_values(by="Name")
+
+# print results
+print("Downgraded Opportunities Table:")
+print(downgraded_df)
+print("\nClosed Won Opportunities Table:")
+print(closed_won_df)
+
 
 # Close the connection
 cursor.close()
