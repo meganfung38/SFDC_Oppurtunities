@@ -13,5 +13,6 @@ requests
 requests-kerberos
 ibis-framework
 ibis-framework[impala]
+openai==1.40.1
 
 

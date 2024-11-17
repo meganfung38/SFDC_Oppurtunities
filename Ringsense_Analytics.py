@@ -1,5 +1,5 @@
-# https://developers.ringcentral.com/my-account.html#/applications
-# Find your credentials at the above url, set them as environment variables, or enter them below
+import os
+from ringcentral import SDK
 
 # PATH PARAMETERS
 accountId = '<ENTER VALUE>'
@@ -11,8 +11,7 @@ queryParams = {
 
 }
 
-import os
-from ringcentral import SDK
+# ENVIRONMENT VARIABLES
 rcsdk = SDK(os.environ['RC_CLIENT_ID'], os.environ['RC_CLIENT_SECRET'], os.environ['RC_SERVER_URL'])
 platform = rcsdk.platform()
 platform.login( jwt=os.environ.get('RC_JWT') )
