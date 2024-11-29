@@ -3,8 +3,8 @@ import pandas as pd
 # import sys
 
 # Run Instructions:
-# 1. enable kerberos client-- kinit megan.fung@ringcentral.com
-# 2. create hive ticket-- kinit -S hive/hiveserver.ringcentral.com megan.fung@RINGCENTRAL.COM
+# 1. enable kerberos client-- kinit <RC user>
+# 2. create hive ticket-- kinit -S hive/hiveserver.ringcentral.com <RC user>@RINGCENTRAL.COM
 # 3. klist to confirm ticket was successfully made
 # 4. activate virtual environment-- source .venv/bin/activate
 # 5. run script-- python3 SFDC_Data.py
@@ -14,7 +14,7 @@ conn = connect(
     host="hiveserver.ringcentral.com",
     port=10000,
     auth_mechanism="GSSAPI",
-    user="megan.fung@RINGCENTRAL.COM",
+    user="<RC user>@RINGCENTRAL.COM",
     kerberos_service_name="hive",
 )
 
