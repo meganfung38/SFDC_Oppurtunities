@@ -30,15 +30,18 @@ The project aims to connect SFDC opportunity data with sales call insights and:
   - Access Request: JIRA Ticket (sample ticket-- https://jira.ringcentral.com/browse/OPS-378891)
     - Requires RC VPN for cluster access.
   - Purpose: Query the `sfdc_production.opportunity` table to collect SFDC opportunities.
+    
 - __RingSense__
   - Access Request: FreshService Ticket (sample ticket-- https://ringcentral.freshservice.com/support/tickets/1685796)
     - Requires admin license (contact the Sales Enablement team).
   - Purpose: Access an organized platform containing call logs between sales reps and customers, allowing easy filtering by company.
+    
 - __RingCentral Developers__
   - RingCX API Endpoint (__PENDING: endpoint in development__)
     - deprecated endpoint: https://developers.ringcentral.com/engage/voice/guide/analytics/reports/global-call-type-detail-report
   - RingSense API Endpoint
     - getRecordingInsights endpoint: https://developers.ringcentral.com/api-reference/RingSense/getRecordingInsights
+      
 - __OpenAI__
   - Requirement: Purchase a OpenAI API key
   - Purpose: Use OpenAI to generate AI-driven insights and trend reports.
@@ -47,6 +50,7 @@ The project aims to connect SFDC opportunity data with sales call insights and:
 ## Tech Stack 
 
 - __Programming Language__: Python
+  
 - __Libraries:__
   - Data integration: `impala.dbapi`, `ringcentral`, `openai`
   - Data organization: `pandas`
@@ -55,6 +59,7 @@ The project aims to connect SFDC opportunity data with sales call insights and:
 ## Configuration
 
 **Setting up Your Virtual Environment**
+
 1. Activate a virtual environment (depending on machine instructions will vary)
    ```bash
    source venv/bin/activate  # Linux/Mac
@@ -64,7 +69,9 @@ The project aims to connect SFDC opportunity data with sales call insights and:
    ```bash
    pip install -r requirements.txt
    ```
+   
 **Setting up OpenAI**
+
 3. Create a file called `config.py`. Provide your OpenAI API key secret in this file.
    ```python
    OPENAI_API_KEY='<API KEY SECRET>'
@@ -74,7 +81,9 @@ The project aims to connect SFDC opportunity data with sales call insights and:
    ```bash
    export OPENAI_API_KEY='<API KEY SECRET>'
    ```
+   
 **Setting up Connection to Hadoop Hive Cluster**
+
 5. Enable the kerberos client
    ```bash
    kinit <RC email>
@@ -91,6 +100,7 @@ The project aims to connect SFDC opportunity data with sales call insights and:
 
 **1. Extract SFDC Opportunities**
 __SFDC_Data.py__
+
    - Use Hadoop to query opportunities
    ```sql
    SELECT *
@@ -103,6 +113,7 @@ __SFDC_Data.py__
    ``` 
 
 **2. Identify Call Logs**
+
    - Reccomended Approach:
      a. Run a sample report of SFDC opportunities and gather a list of companies we've closed deals with or downgraded.
       <img width="1417" alt="Screenshot 2024-11-29 at 12 34 11 PM" src="https://github.com/user-attachments/assets/9a41e086-802d-4463-9d43-7221dd7cc018">
@@ -112,6 +123,7 @@ __SFDC_Data.py__
    - Generally, since sales reps use AutoDialer or manual dialing in RCX/ Buddy Tool, call logs will be saved in the RingCX API.
      
 **3. Retrieve Source Ids**
+
    - Assuming most call logs are saved in RingCX, go to the API reference for RingCX.
      - __Currently the endpoint that would be used to retrieve the sourceRecordIds for call logs in RingCX has been deprecated and is in actively being developed__
      - https://developers.ringcentral.com/engage/voice/guide/analytics/reports/global-call-type-detail-report
@@ -119,6 +131,7 @@ __SFDC_Data.py__
    - For call logs saved elsewhere, use the API reference in the RingCentral Developers Portal to find an endpoint that will return the call log's `source id`.
      
 **4. Isolate the the API response retrieved in the previous step to map a list containing the following fields:**
+
    - `sourceId`-- sourceRecordId of call log
    - Figure out which field contains information about what company/ name of person called
      - Potential fields to consider: `sourceGroupName`, `sourceName`, `connectedName`
@@ -135,6 +148,7 @@ __SFDC_Data.py__
      ```
      
 **5. Join SFDC Data with Call Log Data**
+
    - Join call logs to SFDC opportunities:
      - Match `sfdc_production.opportunity.name` with `company name` in call log data.
      - Match `sfdc_production.opportunity.partner_contact__c` with `dnis` in call log data.
@@ -142,6 +156,7 @@ __SFDC_Data.py__
      
 **6. Retrieve Call Insights**
 __RingsenseAnalytics.py__
+
    - Call the getRecordingInsights endpoint for each sourceId in the joined table of data. 
      - Endpoint Guide in RingCentral Developers: https://developers.ringcentral.com/api-reference/RingSense/getRecordingInsights
      - Endpoint Path Parameters:
@@ -157,6 +172,7 @@ __RingsenseAnalytics.py__
     __*NOTE:__ depending on where the call log was hosted, this endpoint may or may not return a response. For sourceIds saved in RingCX and RingEX, a response is expected to return. However, for other sources such as Microsoft Teams, RingCentral Phone, and RingCentral Video, a response may not return. For more information contact a RC employee listed at the bottom of this file.
     
 **7. Data Organization**
+
     - Organize the gathered data. A suggested table schema is below: 
    | sfdc_production.opportunity.name | sfdc_production.opportunity.stagename | RingSenseData |
    |----------------------------------|---------------------------------------|---------------|
@@ -164,6 +180,7 @@ __RingsenseAnalytics.py__
 
 **8. Analyze With OpenAI**
 __Generate_Report.py__
+
     - Use the ask_openai() function analyze the SFDC opportunity data and RingSense insights data using OpenAI
       ```python
       # context for pre-processing
