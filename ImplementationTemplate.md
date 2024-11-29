@@ -41,22 +41,22 @@ The project aims to connect SFDC opportunity data with sales call insights and:
 
 
 - __Hadoop__
-  - Access Request: JIRA Ticket (sample ticket-- https://jira.ringcentral.com/browse/OPS-378891)
+  - Access Request: JIRA Ticket ([sample ticket](https://jira.ringcentral.com/browse/OPS-378891))
     - Requires RC VPN for cluster access.
   - Purpose: Query the `sfdc_production.opportunity` table to collect SFDC opportunities.
 
     
 - __RingSense__
-  - Access Request: FreshService Ticket (sample ticket-- https://ringcentral.freshservice.com/support/tickets/1685796)
+  - Access Request: FreshService Ticket ([sample ticket](https://ringcentral.freshservice.com/support/tickets/1685796))
     - Requires admin license (contact the Sales Enablement team).
   - Purpose: Access an organized platform containing call logs between sales reps and customers, allowing easy filtering by company.
 
     
 - __RingCentral Developers__
   - RingCX API Endpoint (__PENDING: endpoint in development__)
-    - deprecated endpoint: https://developers.ringcentral.com/engage/voice/guide/analytics/reports/global-call-type-detail-report
+    - [deprecated endpoint](https://developers.ringcentral.com/engage/voice/guide/analytics/reports/global-call-type-detail-report)
   - RingSense API Endpoint
-    - getRecordingInsights endpoint: https://developers.ringcentral.com/api-reference/RingSense/getRecordingInsights
+    - [getRecordingInsights endpoint](https://developers.ringcentral.com/api-reference/RingSense/getRecordingInsights)
 
       
 - __OpenAI__
@@ -193,8 +193,7 @@ __SFDC_Data.py__
 **3. Retrieve Source Ids**
 
    - Assuming most call logs are saved in RingCX, go to the API reference for RingCX.
-     - __Currently the endpoint that would be used to retrieve the sourceRecordIds for call logs in RingCX has been deprecated and is in actively being developed__
-     - https://developers.ringcentral.com/engage/voice/guide/analytics/reports/global-call-type-detail-report
+     - __Currently the endpoint that would be used to retrieve the sourceRecordIds for call logs in RingCX has been deprecated and is in actively being developed__: [deprecated endpoint](https://developers.ringcentral.com/engage/voice/guide/analytics/reports/global-call-type-detail-report)
      - Once this endpoint is deployed, the property to target in the API response is `sourceId`
    
    - For call logs saved elsewhere, use the API reference in the RingCentral Developers Portal to find an endpoint that will return the call log's `source id`.
@@ -238,7 +237,7 @@ __SFDC_Data.py__
 __RingsenseAnalytics.py__
 
    - Call the getRecordingInsights endpoint for each sourceId in the joined table of data. 
-     - Endpoint Guide in RingCentral Developers: https://developers.ringcentral.com/api-reference/RingSense/getRecordingInsights
+     - [Endpoint Guide in RingCentral Developers](https://developers.ringcentral.com/api-reference/RingSense/getRecordingInsights)
      - Endpoint Path Parameters:
        
          ```json
@@ -251,7 +250,7 @@ __RingsenseAnalytics.py__
          ]
          ```
        
-    *NOTE: depending on where the call log was hosted, this endpoint may or may not return a response. For sourceIds saved in RingCX and RingEX, a response is expected to return. However, for other sources such as Microsoft Teams, RingCentral Phone, and RingCentral Video, a response may not return. For more information contact a RC employee listed at the bottom of this file.*
+    - NOTE: depending on where the call log was hosted, this endpoint may or may not return a response. For sourceIds saved in RingCX and RingEX, a response is expected to return. However, for other sources such as Microsoft Teams, RingCentral Phone, and RingCentral Video, a response may not return. For more information contact a RC employee listed at the bottom of this file.
 
 
     
