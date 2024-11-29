@@ -2,19 +2,25 @@
 
 This document outlines the roadmap and external dependencies required to implement a solution for analyzing Salesforce opportunities.
 
+
+
 ## Problem Statement 
 
 Salesforce opportunities are critical for tracking the sales pipeline and decision-making processes. However, the current system lacks meaningful insights into opportunity outcomes:
 
+
 - __Stage: 0. Downgraded__
   - Downgrade Reason field: often contains vague or unhelpful information (ex. "Not BANT qualified"), failing to provide actionable insights into why opportunities were downgraded.
   - This limits the ability to understand and address root causes of lost opportunities.
+
     
 - __Stage: 7. Closed Won__
   - Win Reason field: sparsely populated or left blank, offering little insight into what factors contributed to successfully closed deals.
   - As a result, the sales team struggles to replicate success and optimize sales strategies.
 
 Additionally, __call logs__ between sales reps and customers-- which could provide valuable insights-- are not currently tied back to SFDC opportunities.
+
+
 
 ## Objective 
 
@@ -24,44 +30,71 @@ The project aims to connect SFDC opportunity data with sales call insights and:
 - Leverage AI to analyze call data and SFDC fields, identifying patterns, sentiment, and decision-making trends.
 - Generate actionable insights to improve sales performance and decision-making.
 
+
+
+
 # Proposed Solution 
 
 
+
 ## Dependencies/ Needed Sources
+
 
 - __Hadoop__
   - Access Request: JIRA Ticket (sample ticket-- https://jira.ringcentral.com/browse/OPS-378891)
     - Requires RC VPN for cluster access.
   - Purpose: Query the `sfdc_production.opportunity` table to collect SFDC opportunities.
+
     
 - __RingSense__
   - Access Request: FreshService Ticket (sample ticket-- https://ringcentral.freshservice.com/support/tickets/1685796)
     - Requires admin license (contact the Sales Enablement team).
   - Purpose: Access an organized platform containing call logs between sales reps and customers, allowing easy filtering by company.
+
     
 - __RingCentral Developers__
   - RingCX API Endpoint (__PENDING: endpoint in development__)
     - deprecated endpoint: https://developers.ringcentral.com/engage/voice/guide/analytics/reports/global-call-type-detail-report
   - RingSense API Endpoint
     - getRecordingInsights endpoint: https://developers.ringcentral.com/api-reference/RingSense/getRecordingInsights
+
       
 - __OpenAI__
   - Requirement: Purchase a OpenAI API key
   - Purpose: Use OpenAI to generate AI-driven insights and trend reports.
 
 
+
 ## Tech Stack 
 
+
 - __Programming Language__: Python
+
   
 - __Libraries:__
   - Data integration: `impala.dbapi`, `ringcentral`, `openai`
   - Data organization: `pandas`
 
 
+
+## Files 
+
+
+__SFDC_Data.py__: Hadoop Data Integration 
+
+
+__RingSense_Analytics.py__: RingSense Insights Integration (for call logs) 
+
+
+__Generate_Report.py__: AI Integration
+
+
+
 ## Configuration
 
+
 **Setting up Your Virtual Environment**
+
 
 1. Activate a virtual environment (depending on machine instructions will vary)
    
@@ -69,14 +102,17 @@ The project aims to connect SFDC opportunity data with sales call insights and:
    source venv/bin/activate  # Linux/Mac
    venv\Scripts\activate     # Windows
    ```
+
    
 2. install dependencies in requirements.txt
 
    ```bash
    pip install -r requirements.txt
    ```
+
    
 **Setting up OpenAI**
+
 
 3. Create a file called `config.py`. Provide your OpenAI API key secret in this file.
 
@@ -86,32 +122,39 @@ The project aims to connect SFDC opportunity data with sales call insights and:
 
    *add `config.py` your `.gitignore` file to protect the key*
 
+
 4. Export the OpenAI API key to your virtual environment
 
    ```bash
    export OPENAI_API_KEY='<API KEY SECRET>'
    ```
+
    
 **Setting up Connection to Hadoop Hive Cluster**
+
 
 5. Enable the kerberos client
 
    ```bash
    kinit <RC email>
    ```
+
    
 6. Instaniate a Hive ticket
 
    ```bash
    kinit -S hive/hiveserver.ringcentral.com <RC email>
    ```
+
    
 7. Confirm that the Hive ticket was successfully created using `klist`
    
    <img width="652" alt="Screenshot 2024-11-29 at 1 45 49 PM" src="https://github.com/user-attachments/assets/aecf0ba7-ba1d-499b-b3cd-8007e91708cf">
+
  
 
 ## Backend Implmentation 
+
 
 **1. Extract SFDC Opportunities**
 __SFDC_Data.py__
@@ -128,6 +171,7 @@ __SFDC_Data.py__
    WHERE stagename = '0. Downgraded';
    ``` 
 
+
 **2. Identify Call Logs**
 
    - Reccomended Approach:
@@ -143,6 +187,8 @@ __SFDC_Data.py__
      c. Complete a few iterations of this process to identify where call logs are being saved. 
    
    - Generally, since sales reps use AutoDialer or manual dialing in RCX/ Buddy Tool, call logs will be saved in the RingCX API.
+
+
      
 **3. Retrieve Source Ids**
 
@@ -152,6 +198,8 @@ __SFDC_Data.py__
      - Once this endpoint is deployed, the property to target in the API response is `sourceId`
    
    - For call logs saved elsewhere, use the API reference in the RingCentral Developers Portal to find an endpoint that will return the call log's `source id`.
+
+
      
 **4. Isolate the the API response retrieved in the previous step to map a list containing the following fields:**
 
@@ -173,6 +221,8 @@ __SFDC_Data.py__
          }
      ]
      ```
+
+
      
 **5. Join SFDC Data with Call Log Data**
 
@@ -181,6 +231,8 @@ __SFDC_Data.py__
      - Match `sfdc_production.opportunity.partner_contact__c` with `dnis` in call log data.
        
    - This step essentially maps relevant call logs back to to sales reps and SFDC opportunities.
+
+
      
 **6. Retrieve Call Insights**
 __RingsenseAnalytics.py__
@@ -200,6 +252,8 @@ __RingsenseAnalytics.py__
          ```
        
     *NOTE: depending on where the call log was hosted, this endpoint may or may not return a response. For sourceIds saved in RingCX and RingEX, a response is expected to return. However, for other sources such as Microsoft Teams, RingCentral Phone, and RingCentral Video, a response may not return. For more information contact a RC employee listed at the bottom of this file.*
+
+
     
 **7. Data Organization**
 
@@ -208,6 +262,8 @@ __RingsenseAnalytics.py__
    | sfdc_production.opportunity.name | sfdc_production.opportunity.stagename | RingSenseData |
    |----------------------------------|---------------------------------------|---------------|
    |      JPC Property Management     |            7. Closed Won              |      <Data>   |
+
+
 
 
 **8. Analyze With OpenAI**
@@ -234,21 +290,30 @@ __Generate_Report.py__
       ```
 
 
+
+
 # Contacts
 
 List of people who can lend a helping hand in clarifying pieces of this project.
+
+
 
 ## Project Spec
 
 Natalie Ryan
 
+
+
 ## Hadoop
 
 Renz Joshua Burce, Ericson Marcos, Fatima Coleen Cuyco
 
+
 ## RC VPN Configuration
 
 Ibrahim Wahba
+
+
 
 ## RingCentral Developer API Endpoints
 
