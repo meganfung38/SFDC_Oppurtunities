@@ -1,4 +1,4 @@
-# Template for Implementation: SFDC Opportunities Analysis Report
+# Project Specs: SFDC Opportunities Analysis Report
 
 This document outlines the roadmap and external dependencies required to implement a solution for analyzing Salesforce opportunities.
 
