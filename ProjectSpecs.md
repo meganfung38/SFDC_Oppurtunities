@@ -324,3 +324,9 @@ Ibrahim Wahba
   - Oscar Santiago Jr: Call log data, RingCX, Hadoop
   - Hari Srinivasan: Help with importing endpoints in local instance of Postman for endpoint testing, additional information regarding endpoints and access
     
+
+
+
+# Megan's Weekly Updates 
+[Doc with Weekly Updates](https://docs.google.com/document/d/11Az4Z2UFS48wQMwv_6t7hGgA2ZDejFLof5hI7aUeVPU/edit?usp=sharing)
+*may be helpful for whoever takes over this project*
