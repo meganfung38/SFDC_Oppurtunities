@@ -256,7 +256,8 @@ __RingsenseAnalytics.py__
     
 **7. Data Organization**
 
-    - Organize the gathered data. A suggested table schema is below: 
+  - Organize the gathered data. A suggested table schema is below:
+    
     
    | sfdc_production.opportunity.name | sfdc_production.opportunity.stagename | RingSenseData |
    |----------------------------------|---------------------------------------|---------------|
@@ -268,7 +269,7 @@ __RingsenseAnalytics.py__
 **8. Analyze With OpenAI**
 __Generate_Report.py__
 
-    - Use the ask_openai() function analyze the SFDC opportunity data and RingSense insights data using OpenAI
+  - Use the ask_openai() function analyze the SFDC opportunity data and RingSense insights data using OpenAI
       
       ```python
       # context for pre-processing
