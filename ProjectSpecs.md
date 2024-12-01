@@ -240,7 +240,7 @@ __RingsenseAnalytics.py__
      - [Endpoint Guide in RingCentral Developers](https://developers.ringcentral.com/api-reference/RingSense/getRecordingInsights)
      - Endpoint Path Parameters:
        
-         ```json
+       ```json
          [
              {
                  "accountId": "~",
@@ -250,7 +250,7 @@ __RingsenseAnalytics.py__
          ]
          ```
        
-    - NOTE: depending on where the call log was hosted, this endpoint may or may not return a response. For sourceIds saved in RingCX and RingEX, a response is expected to return. However, for other sources such as Microsoft Teams, RingCentral Phone, and RingCentral Video, a response may not return. For more information contact a RC employee listed at the bottom of this file.
+     - NOTE: depending on where the call log was hosted, this endpoint may or may not return a response. For sourceIds saved in RingCX and RingEX, a response is expected to return. However, for other sources such as Microsoft Teams, RingCentral Phone, and RingCentral Video, a response may not return. For more information contact a RC employee listed at the bottom of this file.
 
 
     
